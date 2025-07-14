@@ -47,7 +47,7 @@ const SearchBarControls = ({
           </div>
         </div>
         {/* View Toggle */}
-        <div className="flex items-center bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="flex items-center bg-white rounded-lg hidden md:block shadow-sm border border-gray-200">
           <button
             onClick={() => setViewMode('card')}
             className={`px-4 py-3 rounded-l-lg transition-colors duration-200 ${

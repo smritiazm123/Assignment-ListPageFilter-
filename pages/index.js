@@ -37,18 +37,46 @@ function Home() {
   const [totalItems, setTotalItems] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const [sortValue, setSortValue] = useState("newest");
+  const [showFilterDrawer, setShowFilterDrawer] = useState(false);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData(1, itemsPerPage, filters, searchValue, sortValue);
+    setCurrentPage(1);
+  }, [filters, searchValue, sortValue]);
 
-  const fetchData = async (page = currentPage, rowsPerPage = itemsPerPage) => {
+  const fetchData = async (
+    page = currentPage,
+    rowsPerPage = itemsPerPage,
+    filtersArg = filters,
+    searchArg = searchValue,
+    sortArg = sortValue
+  ) => {
+    // Build query string from filters and search
+    const params = new URLSearchParams();
+    if (searchArg) params.append('query', searchArg);
+    if (filtersArg.Geography?.length || filtersArg.geography?.length) {
+      const geo = filtersArg.Geography || filtersArg.geography;
+      params.append('Geography', geo.join('+'));
+    }
+    if (filtersArg.sectors?.length) params.append('sectors', filtersArg.sectors.join('+'));
+    if (filtersArg.tags?.length) params.append('tags', filtersArg.tags.join('+'));
+    if (filtersArg.formats?.length) params.append('formats', filtersArg.formats.join('+'));
+    params.append('size', rowsPerPage);
+    params.append('page', page);
+    // Sorting
+    if (sortArg === 'newest') {
+      params.append('sort', 'recent');
+      params.append('order', 'desc');
+    } else if (sortArg === 'oldest') {
+      params.append('sort', 'recent');
+      params.append('order', 'asc');
+    } // Add more sort options if needed
     try {
       setLoading(true);
-      const response = await fetch(`https://api.datakeep.civicdays.in/api/search/dataset/?page=${page}&size=${rowsPerPage}`);
+      const response = await fetch(`https://api.datakeep.civicdays.in/api/search/dataset/?${params.toString()}`);
       const result = await response.json();
       setData(result.results || []);
-      setTotalItems(50);
+      setTotalItems(result.total || 50);
       setAggregations(result.aggregations || {});
     } catch (err) {
       setError("Failed to fetch data");
@@ -65,12 +93,16 @@ function Home() {
   };
 
   const handleFilterChange = (category, value) => {
-    setFilters(prev => ({
-      ...prev,
-      [category]: prev[category].includes(value)
-        ? prev[category].filter(item => item !== value)
-        : [...prev[category], value]
-    }));
+    setFilters(prev => {
+      // Support both 'geography' and 'Geography' keys
+      const key = category === 'geography' ? 'Geography' : category;
+      return {
+        ...prev,
+        [key]: prev[key]?.includes(value)
+          ? prev[key].filter(item => item !== value)
+          : [...(prev[key] || []), value]
+      };
+    });
   };
 
   const filteredData = data.filter(item => {
@@ -93,14 +125,14 @@ function Home() {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    fetchData(page, itemsPerPage);
+    fetchData(page, itemsPerPage, filters, searchValue, sortValue);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleRowsPerPageChange = (newRowsPerPage) => {
     setItemsPerPage(newRowsPerPage);
     setCurrentPage(1);
-    fetchData(1, newRowsPerPage);
+    fetchData(1, newRowsPerPage, filters, searchValue, sortValue);
   };
 
   const handleFirstPage = () => {
@@ -170,20 +202,60 @@ function Home() {
         viewMode={viewMode}
         setViewMode={setViewMode}
       />
+      {/* Mobile Filters Button */}
+      <div className="fixed bottom-4 right-4 z-50 md:hidden">
+        <button
+          onClick={() => setShowFilterDrawer(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg"
+        >
+          Filters
+        </button>
+      </div>
+      {/* Mobile Drawer */}
+      {showFilterDrawer && (
+        <div className="fixed inset-0 z-50 flex">
+          {/* Overlay */}
+          <div className="fixed inset-0 bg-black bg-opacity-40" onClick={() => setShowFilterDrawer(false)} />
+          {/* Drawer */}
+          <div className="relative bg-white w-72 h-full shadow-lg p-4 z-50 animate-slideInLeft">
+            <button
+              className="mb-4 text-blue-950 font-bold"
+              onClick={() => setShowFilterDrawer(false)}
+            >
+              Close
+            </button>
+            <SidebarFilters
+              aggregations={aggregations}
+              filters={filters}
+              expandedAccordions={expandedAccordions}
+              toggleAccordion={toggleAccordion}
+              handleFilterChange={handleFilterChange}
+              normalizeAgg={normalizeAgg}
+              AccordionItem={AccordionItem}
+              FilterCheckbox={FilterCheckbox}
+            />
+          </div>
+        </div>
+      )}
       <div className="flex">
-        <SidebarFilters
-          aggregations={aggregations}
-          filters={filters}
-          expandedAccordions={expandedAccordions}
-          toggleAccordion={toggleAccordion}
-          handleFilterChange={handleFilterChange}
-          normalizeAgg={normalizeAgg}
-          AccordionItem={AccordionItem}
-          FilterCheckbox={FilterCheckbox}
-        />
+        {/* Desktop Sidebar */}
+        <div className="hidden md:block">
+          <SidebarFilters
+            aggregations={aggregations}
+            filters={filters}
+            expandedAccordions={expandedAccordions}
+            toggleAccordion={toggleAccordion}
+            handleFilterChange={handleFilterChange}
+            normalizeAgg={normalizeAgg}
+            AccordionItem={AccordionItem}
+            FilterCheckbox={FilterCheckbox}
+          />
+        </div>
         {/* Main Content */}
-        <div className="flex-1 p-4">
-
+        <div className="flex-1 p-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-800">Datasets</h1>
+          </div>
           {/* Content based on view mode */}
           {viewMode === 'card' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -192,7 +264,7 @@ function Home() {
               ))}
             </div>
           ) : (
-            <div className="bg-transparent rounded-lg  border border-none overflow-hidden">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               {currentData.map((item, idx) => (
                 <ListView key={item.id || idx} item={item} idx={idx} />
               ))}
