@@ -1,5 +1,5 @@
 import React from "react";
-
+import SearchIcon from '@mui/icons-material/Search';
 const SearchBarControls = ({
   searchValue,
   onSearchChange,
@@ -8,17 +8,20 @@ const SearchBarControls = ({
   viewMode,
   setViewMode
 }) => (
-  <div className="bg-white shadow-sm border-b border-gray-200 p-4">
-    <div className="max-w-4xl mx-auto">
-      <div className="flex flex-col lg:flex-row gap-4 items-center">
+  <div className="bg-white shadow-sm border-b border-gray-200 p-4 w-full">
+    <div className="w-[100%]">
+      <div className="flex w-full flex-col lg:flex-row justify-between gap-4">
         {/* Search Input */}
-        <div className="flex-1 w-full">
+        <div className="flex-1 relative">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <SearchIcon className="text-gray-400" />
+          </span>
           <input
             type="text"
             value={searchValue}
             onChange={onSearchChange}
-            placeholder="start typing to search for any dataset"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Start typing to search for any Dataset"
+            className="w-full pl-10 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
         {/* Latest Updated Dropdown */}
