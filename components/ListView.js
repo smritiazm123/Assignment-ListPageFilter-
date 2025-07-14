@@ -10,7 +10,7 @@ const ListView = ({ item, idx }) => (
   >
     <div className="flex justify-between items-start">
       <div className="flex-1">
-        <h3 className="font-semibold text-lg text-blue-700 mb-2">
+        <h3 className="font-semibold text-lg text-[#1F5F8D] mb-2">
           {item.organization?.name || "No Organization"}
         </h3>
         <p className="text-gray-700 mb-3 line-clamp-2">
@@ -39,7 +39,7 @@ const ListView = ({ item, idx }) => (
             <div className="flex items-center gap-1">
               <span className="text-xs font-medium text-gray-500">Sectors:</span>
               {item.sectors.slice(0, 3).map((sector, i) => (
-                <span key={i} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">
+                <span key={i} className="px-2 py-1 bg-blue-100 text-[#1F5F8D] text-xs rounded">
                   {sector}
                 </span>
               ))}
