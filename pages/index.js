@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-
+import EventIcon from '@mui/icons-material/Event';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import LanguageIcon from '@mui/icons-material/Language';
+import BarChartIcon from '@mui/icons-material/BarChart';
 function Home() {
   const [data, setData] = useState([]);
   const [aggregations, setAggregations] = useState({});
@@ -162,16 +165,16 @@ function Home() {
         {item.description || "No description available."}
       </div>
       <div className="text-xs text-gray-500 mb-1">
-        <span className="font-medium">Last Updated:</span> {item.modified ? new Date(item.modified).toLocaleDateString() : "N/A"}
+        <span className="font-medium"><EventIcon/>Last Updated:</span> {item.modified ? new Date(item.modified).toLocaleDateString() : "N/A"}
       </div>
       <div className="text-xs text-gray-500 mb-1">
-        <span className="font-medium">Downloads:</span> {item.download_count ?? "N/A"}
+        <span className="font-medium"><GetAppIcon/>Downloads:</span> {item.download_count ?? "N/A"}
       </div>
       <div className="text-xs text-gray-500 mb-1">
-        <span className="font-medium">Geography:</span> {item.geography ?? "N/A"}
+        <span className="font-medium"><LanguageIcon/>Geography:</span> {item.geography ?? "N/A"}
       </div>
       <div className="text-xs text-gray-500 mb-1">
-        <span className="font-medium">Sectors:</span> {Array.isArray(item.sectors) ? item.sectors.join(", ") : item.sectors ?? "N/A"}
+        <span className="font-medium"><BarChartIcon/>Sectors:</span> {Array.isArray(item.sectors) ? item.sectors.join(", ") : item.sectors ?? "N/A"}
       </div>
       <div className="text-xs text-gray-500 mb-1">
         <span className="font-medium">Tags:</span> {Array.isArray(item.tags) ? item.tags.join(", ") : item.tags ?? "N/A"}
@@ -200,15 +203,15 @@ function Home() {
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
             <div>
-              <span className="font-medium">Last Updated:</span><br />
+              <span className="font-medium"><EventIcon/>Last Updated:</span><br />
               {item.modified ? new Date(item.modified).toLocaleDateString() : "N/A"}
             </div>
             <div>
-              <span className="font-medium">Downloads:</span><br />
+              <span className="font-medium"><GetAppIcon/>Downloads:</span><br />
               {item.download_count ?? "N/A"}
             </div>
             <div>
-              <span className="font-medium">Geography:</span><br />
+              <span className="font-medium"><LanguageIcon/>Geography:</span><br />
               {item.geography ?? "N/A"}
             </div>
             <div>
@@ -289,14 +292,68 @@ function Home() {
         </div>
       </header>
 
-      {/* Search Bar */}
+      {/* Search Bar and Controls */}
       <div className="bg-white shadow-sm border-b border-gray-200 p-4">
-        <div className="max-w-4xl mx-auto">
-          <input
-            type="text"
-            placeholder="start typing to search for any dataset"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
+        <div className=" mx-auto">
+          <div className="flex flex-col lg:flex-row gap-4 items-center">
+            {/* Search Input */}
+            <div className="flex-1 w-full">
+              <input
+                type="text"
+                placeholder="start typing to search for any dataset"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            {/* Latest Updated Dropdown */}
+            <div className="flex items-center space-x-2">
+              <span className="text-sm font-medium text-gray-700">Latest Updated:</span>
+              <div className="relative">
+                <select className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="last-week">Last Week</option>
+                  <option value="last-month">Last Month</option>
+                  <option value="last-year">Last Year</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* View Toggle */}
+            <div className="flex items-center bg-white rounded-lg shadow-sm border border-gray-200">
+              <button
+                onClick={() => setViewMode('card')}
+                className={`px-4 py-3 rounded-l-lg transition-colors duration-200 ${
+                  viewMode === 'card' 
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+                title="Card View"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                </svg>
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={`px-4 py-3 rounded-r-lg transition-colors duration-200 ${
+                  viewMode === 'list' 
+                    ? 'bg-blue-500 text-white' 
+                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+                title="List View"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -423,38 +480,8 @@ function Home() {
 
         {/* Main Content */}
         <div className="flex-1 p-8">
-          <div className="flex justify-between items-center mb-8">
+          <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-800">Datasets</h1>
-            
-            {/* View Toggle */}
-            <div className="flex items-center bg-white rounded-lg shadow-sm border border-gray-200">
-              <button
-                onClick={() => setViewMode('card')}
-                className={`px-4 py-2 rounded-l-lg transition-colors duration-200 ${
-                  viewMode === 'card' 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-white text-gray-600 hover:bg-gray-50'
-                }`}
-                title="Card View"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
-                </svg>
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`px-4 py-2 rounded-r-lg transition-colors duration-200 ${
-                  viewMode === 'list' 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-white text-gray-600 hover:bg-gray-50'
-                }`}
-                title="List View"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd"/>
-                </svg>
-              </button>
-            </div>
           </div>
 
           {/* Content based on view mode */}
