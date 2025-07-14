@@ -32,7 +32,7 @@ const ListView = ({ item, idx }) => (
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mt-8">
           <div>
-            <span className="font-medium"><EventIcon sx={{color:"#b17f3d",fontSize:"20px"}}/> Last Updated:</span><b> {item.modified ? new Date(item.modified).toLocaleDateString() : "N/A"}</b><br />
+            <span className="font-medium"><EventIcon sx={{color:"#b17f3d",fontSize:"20px"}}/> Last Updated:</span><b> {item.modified ? new Date(item.modified).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : "N/A"}</b><br />
           </div>
           <div>
             <span className="font-medium"><GetAppIcon sx={{color:"#b17f3d",fontSize:"20px"}}/> Downloads:</span><b> {item.download_count ?? "N/A"}</b><br />
