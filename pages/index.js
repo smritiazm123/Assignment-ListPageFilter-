@@ -182,10 +182,8 @@ function Home() {
           FilterCheckbox={FilterCheckbox}
         />
         {/* Main Content */}
-        <div className="flex-1 p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Datasets</h1>
-          </div>
+        <div className="flex-1 p-4">
+
           {/* Content based on view mode */}
           {viewMode === 'card' ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -194,7 +192,7 @@ function Home() {
               ))}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div className="bg-transparent rounded-lg  border border-none overflow-hidden">
               {currentData.map((item, idx) => (
                 <ListView key={item.id || idx} item={item} idx={idx} />
               ))}
