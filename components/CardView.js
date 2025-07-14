@@ -34,7 +34,7 @@ const CardView = ({ item, idx }) => (
           </div>
           <div>
             <LanguageIcon sx={{color:"#b17f3d",fontSize:"20px"}}/>
-            <b className="truncate max-w-[40px] align-middle inline-block">
+            <b className="truncate max-w-[100px] align-middle inline-block">
               {item.metadata?.[1]?.value ?? "N/A"}
             </b>
           </div>
